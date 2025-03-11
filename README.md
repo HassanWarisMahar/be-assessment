@@ -101,11 +101,13 @@ AuthService --> BillingController : "secures"
 | total_amount | DECIMAL | Total bill amount          |
 | currency     | VARCHAR | Original currency          |
 
+
 ## Postman Collection Setup
 
-1. Open Postman.
-2. Click `Import`.
-3. Select `Raw Text` and paste the following JSON:
+1. Open Postman. 
+2. Select `Raw Text` and paste the following JSON:
+3. Click `Import`. 
+4. Run the API requests with the appropriate headers and body.
 
 ```json
 {
@@ -209,16 +211,46 @@ AuthService --> BillingController : "secures"
 }
 ```
 
-4. Click `Import`.
-5. Run the API requests with the appropriate headers and body.
 
-## How to Run
-
+## How to Setup and Run the Application
 1. Clone the repository.
 2. Navigate to the project directory.
-3. Run `mvn clean install` to build the project.
-4. Start the application using `mvn spring-boot:run`.
-5. Use Postman to test the API endpoints.
+3. Run `mvn clean install` to build the project. 
+4. Configure the API key for the exchange rate service. 
+5. Import the SSL certificate if required. 
+6. Start the application using `mvn spring-boot:run`. 
+7. Use Postman to test the API endpoints.
+
+
+## Currency Exchange and Discount Calculation API
+
+This Spring Boot application integrates with a third-party currency exchange API to retrieve real-time exchange rates. It calculates the total payable amount for a bill in a specified currency after applying applicable discounts.
+
+## Third-Party API Integration
+This application integrates with a currency exchange API to retrieve real-time exchange rates. The API endpoint used is:
+
+```
+https://open.er-api.com/v6/latest/{base_currency}?apikey=your-api-key
+```
+
+### Certificate Import for Secure API Calls
+To ensure secure communication with the third-party API, the SSL certificate must be imported into the Java Keystore. Use the following command to import the certificate:
+
+```sh
+%userprofile%/.jdks/corretto-21.0.6/bin/keytool -import -alias "Exchangerate.com" -file "%userprofile%/Desktop/exchangerate-api.com" -keystore "%userprofile%/.jdks/corretto-21.0.6/lib/security/cacerts" -storepass changeit -noprompt
+```
+
+Alternatively, if you encounter issues with SSL verification, you can configure your application to bypass SSL checks (not recommended for production).
+
+> **Note:** If using Docker or a different JDK distribution, ensure the certificate is correctly added to the appropriate keystore.
+
+## Features
+- **Third-party API integration** for real-time currency exchange rates.
+- **Discount calculation logic** based on user type and bill amount.
+- **Authentication** for secured endpoints.
+- **API Endpoint (`/api/calculate`)** to accept bill details and return the net payable amount.
+- **Caching** for exchange rates to reduce API calls.
+
 
 ## Technologies Used
 
@@ -229,7 +261,13 @@ AuthService --> BillingController : "secures"
 - **Lombok, Logback, Postman**
 - **JUnit, Mockito for Testing**
 
-## License
 
+## Contribution
+Feel free to submit pull requests with improvements or bug fixes.
+
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+
 
