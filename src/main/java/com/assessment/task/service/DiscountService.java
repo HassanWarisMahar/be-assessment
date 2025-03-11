@@ -2,9 +2,13 @@ package com.assessment.task.service;
 
 import com.assessment.task.dto.Bill;
 import com.assessment.task.dto.UserType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+@Slf4j
 @Service
 public class DiscountService {
     private final CurrencyExchangeService currencyExchangeService;
@@ -20,14 +24,7 @@ public class DiscountService {
         double nonGroceryAmount = totalAmount - groceryAmount;
 
         // Determine the highest applicable percentage discount
-        double percentageDiscount = 0.0;
-        if (user.isEmployee()) {
-            percentageDiscount = 30.0;
-        } else if (user.isAffiliate()) {
-            percentageDiscount = 10.0;
-        } else if (user.isLoyalCustomer()) {
-            percentageDiscount = 5.0;
-        }
+        double percentageDiscount = getApplicableDiscount(user);
 
         // Apply percentage discount only on non-grocery items
         double discountedNonGroceryAmount = nonGroceryAmount - (nonGroceryAmount * (percentageDiscount / 100));
@@ -38,13 +35,31 @@ public class DiscountService {
         // Final bill amount after discounts
         double finalAmount = discountedNonGroceryAmount + groceryAmount - flatDiscount;
 
+        log.info("Final amount before conversion: {}", finalAmount);
+
         // Convert to target currency
         return convertCurrency(bill.getOriginalCurrency(), bill.getTargetCurrency(), finalAmount);
     }
 
+    private double getApplicableDiscount(UserType user) {
+        if (user.isEmployee()) {
+            return 30.0;
+        } else if (user.isAffiliate()) {
+            return 10.0;
+        } else if (user.isLoyalCustomer()) {
+            return 5.0;
+        }
+        return 0.0;
+    }
+
     private double convertCurrency(String baseCurrency, String targetCurrency, double amount) {
-        double exchangeRate = currencyExchangeService.getExchangeRate(baseCurrency, targetCurrency);
-        return amount * exchangeRate;
+        Optional<Double> exchangeRateOpt = currencyExchangeService.getExchangeRate(baseCurrency, targetCurrency);
+
+        double exchangeRate = exchangeRateOpt.orElseThrow(() ->
+                new RuntimeException("Exchange rate not available for " + baseCurrency + " to " + targetCurrency));
+
+        double convertedAmount = amount * exchangeRate;
+        log.info("Converted amount: {} {} -> {} {}", amount, baseCurrency, convertedAmount, targetCurrency);
+        return convertedAmount;
     }
 }
-

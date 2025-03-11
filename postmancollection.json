@@ -1,0 +1,99 @@
+{
+  "info": {
+    "_postman_id": "your-unique-id",
+    "name": "Assessment Task API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth APIs",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"testuser\", \"password\": \"password123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Welcome",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/welcome",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "welcome"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Currency Exchange APIs",
+      "item": [
+        {
+          "name": "Convert Currency",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/auth/convert?baseCurrency=USD&targetCurrency=EUR",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "convert"],
+              "query": [
+                {"key": "baseCurrency", "value": "USD"},
+                {"key": "targetCurrency", "value": "EUR"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Billing APIs",
+      "item": [
+        {
+          "name": "Calculate Bill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"userType\": \"EMPLOYEE\", \"registrationDate\": \"2020-01-01\", \"items\": [{\"item\": \"Laptop\", \"price\": 1200}], \"originalCurrency\": \"USD\", \"targetCurrency\": \"EUR\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/billing/calculate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "billing", "calculate"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}
